@@ -128,7 +128,7 @@ def process_data(data: dict) -> pd.DataFrame:
 
 
 if __name__ == "__main__":
-    # Usage: python fetch_data_module.py USD 2003-01-01 2025-01-01
+    # Usage: python fetch_fx_data.py USD 2003-01-01 2025-01-01
     to_fx = sys.argv[1]           # e.g., 'USD'
     start_date = sys.argv[2]      # e.g., '2003-01-01'
     end_date = sys.argv[3]        # e.g., '2025-01-01'
