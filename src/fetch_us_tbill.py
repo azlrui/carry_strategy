@@ -1,19 +1,35 @@
 """
-fetch_us_tbill.py
+==========================================================
+US T-Bill Rate Fetcher & Processor Module
+==========================================================
 
-Fetches daily US Treasury Bill (T-Bill) rates from the US Treasury website and outputs
-a time series of monthly (4-week coupon equivalent) rates, aligned to month-end.
+This module fetches daily US Treasury Bill (T-Bill) rates 
+from the official US Treasury website and structures them 
+into a time-aligned monthly pandas DataFrame.
 
-- Input (via command line): start_date, end_date in YYYY-MM-DD format
-- Output: CSV file saved in the `../data/` directory
-- Designed for integration into larger projects via import or CLI
+Specifically, it retrieves the 4-week and 13-week coupon 
+equivalent rates and aligns them to month-end for use in 
+macro or carry trade models.
 
-Usage (from CLI):
-    python fetch_us_tbill.py 2003-01-01 2025-01-01
+Functions:
+- fetch_us_tbill(): Fetches raw T-Bill data and processes it.
+- save_to_csv(): Saves the processed monthly series to disk.
 
-Author: Rui Azevedo
-Project: Carry Strategy
+Usage:
+- Can be run as a standalone script with:
+    python fetch_us_tbill.py YYYY-MM-DD YYYY-MM-DD
+  (e.g., python fetch_us_tbill.py 2003-01-01 2025-01-01)
+- Can also be imported as a module in larger carry strategy 
+  or fixed income research pipelines.
+
+Dependencies:
+- pandas
+- numpy
+- requests
+- sys
+==========================================================
 """
+
 
 import pandas as pd
 import numpy as np
@@ -22,7 +38,7 @@ import os
 import re
 
 
-def fetch_tbill_data(start_date: str, end_date: str, output_path: str = "../data") -> pd.DataFrame:
+def fetch_tbill_data(start_date: str, end_date: str, output_path: str = "data/") -> pd.DataFrame:
     """
     Downloads and processes US T-Bill data between the given dates.
 
@@ -35,7 +51,7 @@ def fetch_tbill_data(start_date: str, end_date: str, output_path: str = "../data
         pd.DataFrame: Cleaned and monthly-resampled T-Bill time series
     """
     # Generate month-end timeline
-    timeline = pd.date_range(start=start_date, end=end_date, freq='M')
+    timeline = pd.date_range(start=start_date, end=end_date, freq='ME')
 
     # Extract list of unique years from timeline
     years = sorted(set([re.search(r'\d{4}', str(date)).group(0) for date in timeline]))
@@ -56,8 +72,8 @@ def fetch_tbill_data(start_date: str, end_date: str, output_path: str = "../data
         df = pd.read_csv(url, sep=",", decimal=".", parse_dates=['Date'], index_col='Date')
 
         # Keep only the 4-week coupon equivalent rate
-        df = df[['4 WEEKS COUPON EQUIVALENT']]
-        df.rename(columns={'4 WEEKS COUPON EQUIVALENT': 'Monthly t-bills'}, inplace=True)
+        df = df[['4 WEEKS COUPON EQUIVALENT', '13 WEEKS COUPON EQUIVALENT']]
+        df.rename(columns={'4 WEEKS COUPON EQUIVALENT': 'Monthly t-bills', '13 WEEKS COUPON EQUIVALENT':'3-Month t-bills'}, inplace=True)
 
         # Concatenate data
         all_data = df if all_data is None else pd.concat([all_data, df], axis=0)
@@ -65,7 +81,7 @@ def fetch_tbill_data(start_date: str, end_date: str, output_path: str = "../data
     # Final formatting: resample to month-end and reindex
     if all_data is not None:
         all_data.index = pd.to_datetime(all_data.index)
-        all_data = all_data.resample('M').last()
+        all_data = all_data.resample('ME').last()
         all_data.sort_index(inplace=True)
         all_data = all_data.reindex(timeline, method='ffill')
     else:
