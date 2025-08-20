@@ -3,10 +3,10 @@ REM ==========================================================
 REM Global Indices Runner (.bat at project root)
 REM Calls your Python fetcher with CLI args
 REM Usage (minimal):
-REM   .\run_index_fetcher.bat 2001-01-01 2025-01-01 1mo "data\"
+REM   .\run_index_fetcher.bat 2001-01-01 2025-01-01 1mo "data/"
 REM
 REM Usage (with .env + exclusions + subset):
-REM   .\run_index_fetcher.bat 2001-01-01 2025-01-01 1mo "data\" ".env" valid_indices fundamentally_excluded "USD,EUR,GBP"
+REM   .\run_index_fetcher.bat 2001-01-01 2025-01-01 1mo "data/" ".env" valid_indices fundamentally_excluded "USD,EUR,GBP"
 REM ==========================================================
 
 REM ---- Script name (change if needed) ----
@@ -27,8 +27,8 @@ set CURR=%~8
 IF "%START%"=="" (
   echo.
   echo Usage: run_index_fetcher.bat START END FREQ OUTDIR [ENV_FILE] [ENV_KEY] [EXCLUDE_KEY] [CURRENCIES]
-  echo Example 1: run_index_fetcher.bat 2001-01-01 2025-01-01 1mo "data\indexes"
-  echo Example 2: run_index_fetcher.bat 2001-01-01 2025-01-01 1mo "data\indexes" ".env" valid_indices fundamentally_excluded "USD,EUR,GBP"
+  echo Example 1: run_index_fetcher.bat 2001-01-01 2025-01-01 1mo "data/"
+  echo Example 2: run_index_fetcher.bat 2001-01-01 2025-01-01 1mo "data/" ".env" valid_indices fundamentally_excluded "USD,EUR,GBP"
   echo.
   exit /b 1
 )

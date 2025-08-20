@@ -3,7 +3,7 @@ REM ==========================================================
 REM Fama-French Factors Runner (.bat at project root)
 REM Calls: src\fetch_fama_french_data.py with CLI args
 REM Usage:
-REM   .\run_fama_french_fetcher.bat 2002-01-01 2024-12-31 month "data/" [--as-decimal]
+REM   .\run_fama_french_fetcher.bat 2001-01-01 2025-01-01 month "data/" [--as-decimal]
 REM   or with aliases: 1mo / 1w / 1d
 REM ==========================================================
 
