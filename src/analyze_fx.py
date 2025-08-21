@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from utils.Classes.StatisticalAnalysis import StatisticalAnalysis as SA
 
 def clean_dataset(df:pd.DataFrame, filter_start: str, filter_end: str) -> pd.DataFrame :
     start, end = filter_start, filter_end
@@ -19,7 +20,10 @@ def main():
 
     fx_data = pd.read_csv(file, index_col='Date', parse_dates=True)
     fx_data = clean_dataset(fx_data, start, end)
-    breakpoint()
+
+    fx = SA(fx_data, method = "net")
+    ret = fx.compute_returns(method = "log")
+    print(ret.head())
 
 if __name__ == "__main__":
     raise SystemExit(main())
